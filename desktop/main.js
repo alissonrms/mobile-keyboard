@@ -17,8 +17,8 @@ app.on('ready', () => {
 
     request.on("response", (response) => {
       response.on('data', (response) => {
-        const ResponseObject = JSON.parse(`${response}`)
-        console.log(ResponseObject.status)
+        const responseObject = JSON.parse(`${response}`)
+        console.log(responseObject.status)
       })
       response.on('end', () => {
       })
