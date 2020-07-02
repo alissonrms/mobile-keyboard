@@ -9,21 +9,16 @@ app.get('/', (request, response) => {
   const usertype = request.headers.usertype
   const password = request.headers.password
 
-  console.log(usertype)
-  console.log(password)
-
   if (usertype == 'mobile' && password == 'batatateste') {
-
-    console.log("mobile phone connected")
+    console.log("mobile phone request")
     return response.json({
-      status: "user connected"
+      status: "permission accepted"
     })
 
   } else if (usertype == 'desktop' && password == 'batatateste') {
-
-    console.log("desktop app connected")
+    console.log("desktop app request")
     return response.json({
-      status: "user connected"
+      status: "permission accepted"
     })
 
   } else {
@@ -31,20 +26,23 @@ app.get('/', (request, response) => {
     return response.json({
       status: "connection refused"
     })
+  }
+})
 
-  }  
+app.get('/test', (req, res) => {
+  res.sendFile(__dirname + '/test.html');
 })
 
 io.on('connection', (socket) => {
-  console.log('user connected')
+  console.log('connection stabilizaded')
 
   socket.on('disconnect', () => {
     console.log('user disconnected')
   })
 
-  socket.on('command', (keyPressed) => {
-    console.log(`Key pressed: ${keyPressed}`)
-    io.emit('pressKey', keyPressed)
+  socket.on('keyPressed', (commandToPerform) => {
+    console.log(`Key pressed: ${commandToPerform}`)
+    io.emit('command', commandToPerform)
   })
 })
 

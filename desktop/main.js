@@ -1,5 +1,7 @@
-const path = require('path')
+const { resolve } = require('path')
 const { app, Menu, Tray } = require('electron')
+const robot = require('robotjs')
+
 
 
 let tray = null
@@ -18,7 +20,16 @@ app.on('ready', () => {
     request.on("response", (response) => {
       response.on('data', (response) => {
         const responseObject = JSON.parse(`${response}`)
-        console.log(responseObject.status)
+        if (responseObject.status === 'user connected') {
+          const socket = require('socket.io-client')('http://localhost:3333')
+          socket.on('connect', function(message){
+            console.log(message)
+          })
+
+          socket.on('command', (commandToPerform) => {
+            robot.keyTap(commandToPerform)
+          })
+        }
       })
       response.on('end', () => {
       })
@@ -32,7 +43,7 @@ app.on('ready', () => {
     app.quit()
   }
 
-  tray = new Tray(path.resolve(__dirname, 'assets', 'icon.png'))
+  tray = new Tray(resolve(__dirname, 'assets', 'icon.png'))
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Conectar', click: connectToServer },
     { label: 'Fechar', click: closeApp }
